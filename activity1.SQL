@@ -1,9 +1,14 @@
+DROP TABLE IF EXISTS Salesman;
+DROP TABLE IF EXISTS Customer;
+DROP TABLE IF EXISTS Orders;
+
 CREATE TABLE IF NOT EXISTS Salesman(
   Salesman_id TEXT PRIMARY KEY,
   name TEXT,
   city TEXT,
   Comission TEXT
 );
+
 INSERT INTO Salesman(Salesman_id,name,city,Comission)
 VALUES
   ("5001","James Hoog","New York","0.15"),
@@ -29,7 +34,7 @@ VALUES
   ("3004","fabian johnson","paris","300","5006"),
   ("3009","geoff cameron","berlin","100","5003"),
   ("3003","jozy altidor","moscow","200","5007"),
-  ("3001","brad guzan","london","","5005");
+  ("3001","brad guzan","london",'',"5005");
 
 CREATE TABLE IF NOT EXISTS Orders(
   ord_no TEXT PRIMARY KEY,
@@ -50,9 +55,9 @@ VALUES
 -- Queries
 
 -- Matching customers and salesmen by city
-SELECT customer.cust_name, salesman.name, salesman.city
+SELECT Customer.cust_name, Salesman.name, Salesman.city
 FROM Customer
-JOIN Salesman ON Customer.city = Salesman.city;
+JOIN Salesman ON Customer.Salesman_id = Salesman.Salesman_id;
 
 -- Linking customers to their salesmen
 SELECT Customer.cust_name, Salesman.name
@@ -60,7 +65,7 @@ FROM Customer
 JOIN Salesman ON Customer.Salesman_id = Salesman.Salesman_id;
 
 -- Fetching orders where customer's city does not match salesman's city
-SELECT Orders.ord_no, Customer.cust_name, Orders.customer_id, Orders.Salesman_id
+SELECT Orders.ord_no, Customer.cust_name, Orders.customer_id, Orders.Salesma  n_id
 FROM Orders
 JOIN Customer ON Orders.customer_id = Customer.customer_id
 JOIN Salesman ON Orders.Salesman_id = Salesman.Salesman_id
@@ -75,21 +80,21 @@ JOIN Customer ON Orders.customer_id = Customer.customer_id;
 SELECT Customer.cust_name AS "Customer", Customer.grade AS "Grade"
 FROM Orders
 JOIN Salesman ON Orders.Salesman_id = Salesman.Salesman_id
-JOIN Customer ON Orders.customer_id = Customer.customer_id
-WHERE Customer.grade IS NOT NULL;
+JOIN Customer ON Orders.Salesman_id = Customer.Salesman_id
+WHERE Customer.grade IS NOT NULL AND TRIM(Customer.grade) !='';
 
 -- Customers with salesmen where commission is between 0.12 and 0.14
 SELECT Customer.cust_name AS "Customer",
 Customer.city AS "City",
 Salesman.name AS "Salesman",
-Salesman.commission
+Salesman.Commission
 FROM Customer
 JOIN Salesman ON Customer.Salesman_id = Salesman.Salesman_id
-WHERE Salesman.commission BETWEEN 0.12 AND 0.14;
+WHERE Salesman.Commission BETWEEN 0.12 AND 0.14;
 
 -- Calculating commissions for orders where customer grade is 200 or more
-SELECT Orders.ord_no, Customer.cust_name, Salesman.commission AS "Commission%",
-Orders.purch_amt * Salesman.commission AS "Commission"
+SELECT Orders.ord_no, Customer.cust_name, Salesman.Commission AS "Commission%",
+Orders.purch_amt * Salesman.Commission AS "Commission"
 FROM Orders
 JOIN Salesman ON Orders.Salesman_id = Salesman.Salesman_id
 JOIN Customer ON Orders.customer_id = Customer.customer_id
